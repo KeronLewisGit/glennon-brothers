@@ -3,7 +3,7 @@
     $total = $plantCounts->sum();
 @endphp
 <x-layouts.site title="Careers" description="Jobs at Glennon Brothers: general operatives, maintenance fitters and electricians, HGV drivers and timber frame erectors at Longford, Fermoy, Windymains, Troon and DTE.">
-    <x-page-header title="Work at the mills" kicker="Careers" code="C" photo="troon-mill"
+    <x-page-header title="Work at the mills" kicker="Careers" photo="troon-mill"
         :ticket="['Plants' => 'Longford, Fermoy, Windymains, Troon', 'Timber frame' => 'DTE, Longford', 'Openings' => (string) $total]"
         lead="The mills hire all year: operatives for the saw, grading and planing lines, maintenance fitters and electricians, drivers, and timber frame erectors for DTE. Pick an opening, or send one application for any plant." />
 
@@ -29,7 +29,7 @@
         </div>
         <div class="mt-6 grid gap-5 md:grid-cols-2">
             @forelse ($jobs as $job)
-                <article class="card-link border-2 border-ink bg-surface p-6" data-reveal>
+                <article class="card-link box p-6" data-reveal>
                     <p class="kicker flex items-center gap-2 text-ink-3"><x-tree class="h-3.5 w-6 text-mark" />{{ $job->plant->label() }} · {{ $job->category->short() }}</p>
                     <h3 class="mt-2 text-[1.375rem] font-bold leading-snug"><a class="stretch" href="{{ route('careers.show', $job) }}">{{ $job->title }}</a></h3>
                     <p class="mt-2 text-ink-2">{{ $job->summary }}</p>
@@ -48,7 +48,7 @@
 
     <section class="wrap mt-20 grid items-center gap-10 lg:grid-cols-2">
         <figure>
-            <x-photo key="operator" alt="A Glennon Brothers operator at the controls in the mill" sizes="(min-width: 1024px) 45vw, 100vw" class="aspect-[4/3] border-2 border-ink" />
+            <x-photo key="operator" alt="A Glennon Brothers operator at the controls in the mill" sizes="(min-width: 1024px) 45vw, 100vw" class="aspect-[4/3] box-photo" />
             <figcaption class="photo-caption">From the group's own website.</figcaption>
         </figure>
         <div class="space-y-8">

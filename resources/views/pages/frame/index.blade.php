@@ -19,7 +19,7 @@
             </div>
         </div>
         <figure>
-            <x-photo key="trusses" alt="Engineered roof trusses stacked in the yard ready for delivery" sizes="(min-width: 1024px) 40vw, 100vw" class="aspect-[4/3] border-2 border-ink" />
+            <x-photo key="trusses" alt="Engineered roof trusses stacked in the yard ready for delivery" sizes="(min-width: 1024px) 40vw, 100vw" class="aspect-[4/3] box-photo" />
             <figcaption class="photo-caption">Roof trusses, from the group's own website.</figcaption>
         </figure>
     </section>
@@ -35,7 +35,7 @@
                     ['Design review', 'The DTE team reviews the drawings and comes back with questions or a quotation. New drawings? Use the private link in your confirmation email.'],
                     ['Manufacture and erection', 'Once ordered, the frame is made in Longford and erected on your prepared foundations.'],
                 ] as $i => [$h, $t])
-                    <li class="border-t-4 border-ink bg-surface p-6">
+                    <li class="box border-t-4 border-t-brand p-6">
                         <span class="step-n">{{ str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) }}</span>
                         <h3 class="mt-4 text-xl font-bold">{{ $h }}</h3>
                         <p class="mt-2 text-ink-2">{{ $t }}</p>
@@ -47,12 +47,12 @@
     </section>
 
     <section class="wrap mt-16 grid gap-6 md:grid-cols-2">
-        <div class="border-2 border-ink bg-surface p-6">
+        <div class="box p-6">
             <h2 class="text-xl font-bold">{{ $dte['name'] }}</h2>
             <address class="mt-3 not-italic text-ink-2">{!! implode('<br>', array_map('e', $dte['address'])) !!}</address>
             <p class="mt-3"><a href="mailto:{{ $dte['email'] }}" class="text-link inline-flex min-h-11 items-center">{{ $dte['email'] }}</a></p>
         </div>
-        <div class="border-2 border-ink bg-surface p-6">
+        <div class="box p-6">
             <h2 class="text-xl font-bold">Building in the UK?</h2>
             <p class="mt-2 text-ink-2">Alexanders Timber Design, {{ gb('atd.address') }}.</p>
             <p class="mt-3"><a href="{{ tel_href(gb('atd.phone')) }}" class="text-link inline-flex min-h-11 items-center">{{ format_phone(gb('atd.phone')) }}</a></p>

@@ -1,5 +1,5 @@
 // Builds the client proposal (letter-size PDF) from the captured screenshots, in the site's own
-// palette and fonts (slate, mill red and timber; Zilla Slab and Instrument Sans).
+// palette and fonts (the group's red #de0a2a and slate #162e38; Montserrat and Inter).
 // Usage: npm run proposal (or node scripts/proposal/build.mjs after a capture).
 import puppeteer from 'puppeteer-core';
 import fs from 'node:fs';
@@ -9,12 +9,14 @@ import { execFileSync } from 'node:child_process';
 const CHROME = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const ROOT = path.resolve('.');
 const SHOTS = path.resolve('dist/proposal/shots');
+const MOTION = JSON.parse(fs.readFileSync(path.join(SHOTS, 'motion.json'), 'utf8'));
+const still = (name) => { const m = MOTION.find((x) => x.name === name); if (!m) throw new Error(`Motion still missing: ${name}`); return m; };
 const chunks = JSON.parse(fs.readFileSync(path.join(SHOTS, 'chunks.json'), 'utf8'));
 const OUT_HTML = path.resolve('dist/proposal/proposal.html');
 const OUT_PDF = path.resolve('dist/proposal/Glennon-Brothers-Website-Proposal.pdf');
 const MAX_MB = 9.5;
 const DATE = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-const TESTS = process.env.TEST_COUNT ?? '86';
+const TESTS = process.env.TEST_COUNT ?? '91';
 const img = (f) => 'file://' + f;
 // Chrome embeds a WebP background losslessly (about 4 MB), so the cover photo goes in as a JPEG.
 const COVER = path.resolve('dist/proposal/cover.jpg');
@@ -29,25 +31,29 @@ const font = (prefix) => {
   return 'file://' + path.join(ASSETS, f);
 };
 const FONTS = [
-  ['Zilla Slab', 500, 'zilla-slab-500-normal'], ['Zilla Slab', 600, 'zilla-slab-600-normal'], ['Zilla Slab', 700, 'zilla-slab-700-normal'],
-  ['Instrument Sans', 400, 'instrument-sans-400-normal'], ['Instrument Sans', 500, 'instrument-sans-500-normal'],
-  ['Instrument Sans', 600, 'instrument-sans-600-normal'], ['Instrument Sans', 700, 'instrument-sans-700-normal'],
+  ['Montserrat', 500, 'montserrat-500-normal'], ['Montserrat', 600, 'montserrat-600-normal'], ['Montserrat', 700, 'montserrat-700-normal'],
+  ['Inter', 400, 'inter-400-normal'], ['Inter', 500, 'inter-500-normal'], ['Inter', 600, 'inter-600-normal'], ['Inter', 700, 'inter-700-normal'],
 ].map(([fam, w, p]) => `@font-face { font-family: "${fam}"; font-weight: ${w}; font-style: normal; src: url("${font(p)}") format("woff2"); }`).join('\n');
 
-// The site's redrawn twin-tree mark and GLENNON / BROTHERS wordmark (after the group's own logo).
-const TREES = (w = 30, color = '#de0a2a') => `<svg viewBox="0 0 48 26" width="${w}" height="${Math.round(w * 26 / 48)}" fill="none" stroke="${color}" stroke-width="2.4" stroke-linejoin="miter" stroke-linecap="square"><path d="M12 2 19.5 11H15.5L22.5 21H1.5L8.5 11H4.5Z"/><path d="M36 2 43.5 11H39.5L46.5 21H25.5L32.5 11H28.5Z"/><path d="M12 21v3.2M36 21v3.2"/></svg>`;
-const MARK = (h = 14) => `<span class="mark">${TREES(Math.round(h * 1.8))}</span>`;
-const WORDMARK = (dark = true) => `<div class="brand"><span class="n ${dark ? '' : 'ink'}">Glennon</span><span class="tb">${TREES(dark ? 46 : 38, dark ? '#ff5468' : '#de0a2a')}<span class="s ${dark ? '' : 'ink'}">Brothers</span></span></div>`;
+// The site's logo (<x-logo>): GLENNON and BROTHERS in the given colour, the twin firs in the brand red.
+const LOGO_PATHS = [...fs.readFileSync(path.join(ROOT, 'resources/views/components/logo.blade.php'), 'utf8').matchAll(/<path [^>]*\/?>(<\/path>)?/g)].map((m) => m[0]);
+if (LOGO_PATHS.length !== 3) throw new Error('Logo paths not found in resources/views/components/logo.blade.php');
+const LOGO = (h, color) => `<svg viewBox="0 0 331 62" height="${h}" width="${Math.round(h * 331 / 62)}" style="color:${color}">${LOGO_PATHS.join('')}</svg>`;
+const TREE_PATH = 'M16.4 40.5 16.4 35.6 9 35.6 13.6 25.5 16.4 25.5 16.4 20.5 11 20.5 18.1 7.6 25.2 20.5 19.8 20.5 19.8 25.5 22.6 25.5 27.2 35.6 19.8 35.6 19.8 40.5 35.5 40.5 36.2 40.5 51.9 40.5 51.9 35.6 44.5 35.6 49.1 25.5 51.9 25.5 51.9 20.5 46.5 20.5 53.6 7.6 60.7 20.5 55.3 20.5 55.3 25.5 58.1 25.5 62.7 35.6 55.3 35.6 55.3 40.5 71.7 40.5 62.7 25.5 68.5 25.5 53.6 0 38.7 25.5 44.5 25.5 35.9 39.9 27.2 25.5 33 25.5 18.1 0 3.2 25.5 9 25.5 0 40.5Z';
+const MARK = (h = 10) => `<span class="mark"><svg viewBox="0 0 72 41" height="${h}" width="${Math.round(h * 72 / 41)}"><path fill="#de0a2a" d="${TREE_PATH}"/></svg></span>`;
+const WORDMARK = (dark = true) => `<div class="brand">${LOGO(dark ? 46 : 38, dark ? '#ffffff' : '#162e38')}</div>`;
 const plate = (code, label, dark = false) => `<p class="plate ${dark ? 'dark' : ''}"><span class="c">${esc(code)}</span><span class="l">${esc(label)}</span></p>`;
 
 /** Hand-written captions per slice (key = screen name, index = slice number), from what each slice shows. */
 const CAPTIONS = {
   home: [
-    'Hero on the group\'s own photograph of the Troon mill, with the two actions a buyer needs (a trade quote, the four mills) and a pack ticket with the founding year, the mills and the telephone number.',
-    'The four sawmills, each with its own page, and the group\'s published capacity figures with their sources.',
-    'Products, from construction timber and CLS to fencing, pallet wood and residues, and DTE timber frame.',
-    'Careers at the four mills and DTE, then trade quotes and haulier slot booking side by side.',
-    'News from the group\'s own press page, then the footer with every mill\'s contact details.',
+    'The hero on the group\'s own photograph of the Troon mill, between red rules like the banner on the current site: the twin firs from the logo, the founding year, the two actions a buyer needs and a tabbed info card. The product range runs beneath it.',
+    'The current home page\'s welcome text and layout, kept and modernised: red tab labels over white boxes for Glendeck, Glenfence and the group\'s companies, beside the welcome.',
+    'The four mills on a map of Ireland and Scotland, each pin and card linked to that mill\'s page.',
+    'From the log yard to a timber frame home: five steps, with a drawing that changes as each one scrolls past (see Motion and interaction).',
+    'Capacity figures and awards only as the group publishes them, then the product lines, each linking to its sizes.',
+    'DTE timber frame, with drawings sent online, and careers at the four mills and DTE.',
+    'Trade quotes and haulier slot booking side by side, news from the group\'s own press page, and the red footer bar of the current site.',
   ],
   plants: [
     'Our mills: four sawmills in two countries, Longford and Fermoy first, each with its address from the group\'s contact page and what it produces.',
@@ -65,8 +71,9 @@ const CAPTIONS = {
     'The three steps (send drawings, give the timeline, design review), DTE\'s own details, and a route for UK projects.',
   ],
   sustainability: [
-    'Sustainability, using only what the group publishes: FSC® chain of custody codes for the Irish and UK plants, the EPA IPC licence, SEPA, ISPM 15 and NSAI approval for DTE.',
-    'Environmental Product Declarations to download, and how every part of the log is used.',
+    'Sustainability, using only what the group publishes, under the same banner as every inner page.',
+    'FSC® chain of custody codes for the Irish and UK plants, the EPA IPC licence, SEPA, ISPM 15 and NSAI approval for DTE, with the Environmental Product Declarations to download.',
+    'How every part of the log is used: wood chip, sawdust, bark and shavings, and the biomass CHP plant at Troon.',
   ],
   about: [
     'About: a family sawmilling business since 1913, in the group\'s own words, with the joint managing directors named on its website.',
@@ -131,7 +138,7 @@ const CAPTIONS = {
 
 /** Screen definitions: section, key, title, bullets. */
 const SECTIONS = [
-  { id: 'public', eyebrow: 'Part 1', code: '01', title: 'The public website', intro: 'A new glennonbrothers.ie, written from the group\'s own pages. Every inner page opens with the same slate band, end-grain rings and a pack ticket, and every page works on a phone.', screens: [
+  { id: 'public', eyebrow: 'Part 1', code: '01', title: 'The public website', intro: 'A new glennonbrothers.ie, written from the group\'s own pages and dressed in its own brand: the red #de0a2a, the GLENNON twin-fir logo, red tab navigation over a slate bar, banner photos between red rules and red tab labels on white boxes, as on the current site. Every page works on a phone, in light or dark.', screens: [
     ['home', 'Home page', ['Leads with what the group makes and the two actions a buyer needs.', 'Capacity figures and awards only as the group publishes them.']],
     ['plants', 'The four mills', ['Longford, Fermoy, Windymains and Troon, each with its own address and contact.']],
     ['plant', 'A mill page', ['One page per mill: its story, facts, open jobs and its own contacts.']],
@@ -172,7 +179,7 @@ const FEATURES = [
   ['Public website', ['One page per mill', 'Products linked to trade quotes', 'DTE timber frame', 'Sustainability and EPDs', 'History and awards', 'News', 'Redirects from the old site\'s pages', 'Sitemap and Google structured data', 'Phone action bar on every page']],
   ['Intake', ['Trade quotes with line items and a cutting list', 'Routing by region and currency', 'Timber frame enquiries with drawings', 'Signed drawings link for customers', 'Haulier slot booking', 'Careers with job postings', 'Job applications with CV upload', 'Contact form', 'Reference number on screen and by email']],
   ['Back office', ['Overview that leads with each role\'s number', 'Quote register with owners and ages', 'Timber frame register and drawings', 'Recruitment pipeline by mill and role family', 'Haulier bookings', 'Notes and a timeline on every record', 'CSV exports', 'Four staff roles and two sales regions']],
-  ['Platform', ['Laravel 13 on PHP 8.3', 'HTTPS throughout', 'All uploads stored privately', 'Each team opens only its own files', 'Rate-limited, spam-protected forms', 'Light and dark themes', `${TESTS} automated tests`, 'Irish and UK GDPR privacy notice', 'Packaged for one-zip installation']],
+  ['Platform', ['Laravel 13 on PHP 8.3', 'HTTPS throughout', 'All uploads stored privately', 'Each team opens only its own files', 'Rate-limited, spam-protected forms', 'Light and dark themes', 'Motion that respects reduced-motion settings', `${TESTS} automated tests`, 'Irish and UK GDPR privacy notice', 'Packaged for one-zip installation']],
 ];
 
 /**
@@ -223,6 +230,13 @@ function pages(c, hasBullets) {
   return best(0, hasBullets).list;
 }
 
+// Every desktop slice has its own caption: fail loudly when the slicing changes under them.
+for (const [key, c] of Object.entries(chunks)) {
+  if (key.startsWith('m-')) continue;
+  const n = (CAPTIONS[key] ?? []).length;
+  if (n !== c.chunks.length) throw new Error(`${key}: ${c.chunks.length} slices but ${n} captions; update CAPTIONS.`);
+}
+
 function caption(key, i, c) {
   const text = CAPTIONS[key]?.[i];
   if (!text) return '';
@@ -254,34 +268,31 @@ const html = `<!doctype html><html lang="en-IE"><head><meta charset="utf-8"><tit
 
   ${FONTS}
   @page { size: Letter; margin: 0.5in 0.6in 0.55in; }
-  :root { --graphite: #162e38; --graphite-950: #0c1c23; --gm: #1f3d4a; --bg: #f7f3ec; --surface-2: #ece5d8; --ink: #162e38; --ink-2: #34505b; --ink-3: #4f6670; --line: #d9d1c3; --coral: #e8cf9f; --coral-text: #a80d24; --coral-soft: #fbeef0; --green: #d3ad6c; --red: #c40c27; }
+  :root { --graphite: #162e38; --graphite-950: #0e1d24; --gm: #1f3d4a; --bg: #f4f5f5; --surface-2: #e8ebec; --ink: #162e38; --ink-2: #33474f; --ink-3: #56656b; --line: #d5dadc; --coral: #de0a2a; --coral-text: #b5081f; --coral-soft: #fbe7ea; --red: #de0a2a; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; font-family: "Instrument Sans", system-ui, sans-serif; color: var(--ink); font-size: 10.5pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  h1, h2, h3, .display { font-family: "Zilla Slab", system-ui, sans-serif; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); margin: 0; line-height: 1.05; }
-  h3 { font-family: "Instrument Sans", system-ui, sans-serif; letter-spacing: 0; font-size: 12pt; }
+  html, body { margin: 0; padding: 0; font-family: "Inter", system-ui, sans-serif; color: var(--ink); font-size: 10.5pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  h1, h2, h3, .display { font-family: "Montserrat", system-ui, sans-serif; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); margin: 0; line-height: 1.05; }
+  h3 { font-family: "Inter", system-ui, sans-serif; letter-spacing: 0; font-size: 12pt; }
   .page { page-break-after: always; break-after: page; height: 9.95in; display: flex; flex-direction: column; overflow: hidden; }
   .page:last-child { page-break-after: auto; }
   .eyebrow { font-size: 8pt; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--coral-text); margin: 0 0 5px; }
   .muted { color: var(--ink-3); }
-  /* number-plate label, as on the site */
-  .plate { align-self: flex-start; display: inline-flex; border: 1.5px solid currentColor; border-radius: 3px; padding: 2px; font-size: 7.5pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; line-height: 1; color: var(--ink-2); margin: 0 0 12px; }
-  .plate span { display: inline-flex; align-items: center; padding: 5px 7px 4px; border-radius: 3px; }
-  .plate .c { background: var(--ink); color: var(--bg); font-family: "Zilla Slab"; font-weight: 700; letter-spacing: .04em; }
-  .plate .l { box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); margin-left: 2px; }
-  .plate.dark { color: rgba(255,255,255,.85); } .plate.dark .c { background: var(--coral); color: var(--graphite); } .plate.dark .l { box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
-  .ticks { height: 14px; background: repeating-linear-gradient(90deg, #e8cf9f 0 46px, #8a6a3a 46px 48px, #d3ad6c 48px 80px, #8a6a3a 80px 82px); border-top: 2px solid #8a6a3a; }
+  /* red tab label, as on the site (and the current glennonbrothers.ie) */
+  .plate { align-self: flex-start; display: inline-flex; background: var(--red); color: #fff; border-radius: 4px 4px 0 0; font-family: "Montserrat"; font-size: 7.5pt; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; line-height: 1; margin: 0 0 12px; overflow: hidden; }
+  .plate span { display: inline-flex; align-items: center; padding: 6px 8px 5px; }
+  .plate .c { background: rgba(0,0,0,.16); font-weight: 700; letter-spacing: .04em; }
+  .ticks { height: 6px; background: var(--red); }
   /* cover and dividers: the site's graphite hero band */
   .dark-page { background: var(--graphite); color: #fff; border-radius: 3px; padding: 0.6in 0.6in 0.5in; position: relative; overflow: hidden; }
   .dark-page h1 { color: #fff; }
   .cover { justify-content: space-between; background-image: linear-gradient(180deg, rgba(12,28,35,.45), rgba(12,28,35,.95) 62%), url("${img(COVER)}"); background-size: cover; background-position: 50% 0; }
   .cover h1 { font-size: 40pt; margin: 14px 0 16px; max-width: 6.2in; }
-  .cover .accent { color: var(--coral); }
+  .cover .accent { color: #ff5468; }
   .cover .lead { color: rgba(255,255,255,.85); font-size: 13pt; max-width: 5.8in; margin: 0; }
   .cover .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; border-top: 1px solid rgba(255,255,255,.18); padding-top: 16px; font-size: 9.5pt; color: rgba(255,255,255,.8); }
   .cover .meta b { display: block; color: #fff; font-size: 9pt; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 4px; }
-  .brand { display: flex; align-items: flex-end; gap: 8px; } .brand .n { display: block; font-family: "Instrument Sans"; font-weight: 600; text-transform: uppercase; font-size: 24pt; color: #fff; line-height: .8; letter-spacing: .02em; } .brand .tb { display: flex; flex-direction: column; align-items: center; } .brand .s { display: block; margin-top: 3px; font-size: 6.5pt; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.75); }
+  .brand { display: flex; align-items: center; }
   .mark { display: inline-flex; align-items: center; flex: none; }
-  .brand .ink { color: var(--ink); } .brand .s.ink { color: var(--ink-3); }
   .divider { justify-content: center; }
   .divider h1 { font-size: 38pt; margin: 6px 0 18px; } .divider p.intro { color: rgba(255,255,255,.85); font-size: 12.5pt; max-width: 6in; margin: 0; }
   .divider ol { color: rgba(255,255,255,.85); columns: 2; font-size: 10pt; margin: 26px 0 0; padding-left: 18px; } .divider li { break-inside: avoid; margin: 3px 0; }
@@ -293,7 +304,7 @@ const html = `<!doctype html><html lang="en-IE"><head><meta charset="utf-8"><tit
   .prose p { margin: 0 0 8px; }
   .prose ul.plain { margin: 0 0 8px; padding-left: 16px; } .prose ul.plain li { margin: 2px 0; }
   .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .card { border: 1px solid var(--line); border-radius: 3px; padding: 11px 13px; background: #fff; break-inside: avoid; }
+  .card { border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 1px 2px rgba(22,46,56,.06), 0 4px 12px rgba(22,46,56,.06); padding: 11px 13px; background: #fff; break-inside: avoid; }
   .card h3 { margin-bottom: 5px; }
   .card ul { margin: 0; padding-left: 15px; } .card li { margin: 2px 0; font-size: 9.6pt; }
   .evidence { border-left: 4px solid var(--coral-text); background: var(--bg); border-radius: 0 10px 10px 0; padding: 10px 14px 10px 30px; margin: 8px 0 10px; }
@@ -301,14 +312,14 @@ const html = `<!doctype html><html lang="en-IE"><head><meta charset="utf-8"><tit
   .src { font-size: 8pt; color: var(--ink-3); }
   .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 6px; }
   .stat { background: var(--graphite); color: #fff; border-radius: 3px; padding: 12px 12px 11px; }
-  .stat b { display: block; font-family: "Zilla Slab"; font-weight: 700; font-size: 22pt; line-height: 1; letter-spacing: -0.03em; color: #fff; border-left: 3px solid var(--coral); padding-left: 8px; }
+  .stat b { display: block; font-family: "Montserrat"; font-weight: 700; font-size: 22pt; line-height: 1; letter-spacing: -0.03em; color: #fff; border-left: 3px solid var(--coral); padding-left: 8px; }
   .stat span { display: block; margin-top: 8px; font-size: 8.5pt; color: rgba(255,255,255,.78); line-height: 1.3; }
   table.feat { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
   table.feat th, table.feat td { border-bottom: 1px solid var(--line); padding: 8px 8px; text-align: left; vertical-align: top; }
   table.feat th { background: var(--surface-2); font-size: 8pt; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); }
   .pill-row { display: flex; flex-wrap: wrap; gap: 5px; } .pill { border: 1px solid #efc3ca; background: var(--coral-soft); color: var(--coral-text); border-radius: 3px; padding: 2px 9px; font-size: 8.5pt; font-weight: 600; }
   /* screenshot pages */
-  .shot-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; border-bottom: 2px solid var(--ink); padding-bottom: 6px; margin-bottom: 7px; }
+  .shot-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; border-bottom: 2px solid var(--red); padding-bottom: 6px; margin-bottom: 7px; }
   .shot-head h2 { font-size: 16pt; } .url { font-family: Menlo, Consolas, monospace; font-size: 8pt; color: var(--ink-3); margin: 0; white-space: nowrap; }
   .bullets { margin: 0 0 7px; padding-left: 16px; font-size: 9.3pt; } .bullets li { margin: 1px 0; } .bullets li::marker { color: var(--coral-text); }
   figure { margin: 0 0 8px; display: block; text-align: center; }
@@ -325,17 +336,27 @@ const html = `<!doctype html><html lang="en-IE"><head><meta charset="utf-8"><tit
   /* investment */
   .price { display: grid; grid-template-columns: 1.45fr 1fr; gap: 14px; align-items: stretch; margin: 6px 0 4px; }
   .price .big { background: var(--graphite); color: #fff; border-radius: 3px; padding: 16px 18px; }
-  .price .big .amt { white-space: nowrap; font-family: "Zilla Slab"; font-weight: 700; font-size: 26pt; line-height: 1; color: #fff; } .price .big .amt small { font-size: 11pt; font-weight: 500; color: rgba(255,255,255,.75); }
+  .price .big .amt { white-space: nowrap; font-family: "Montserrat"; font-weight: 700; font-size: 26pt; line-height: 1; color: #fff; } .price .big .amt small { font-size: 11pt; font-weight: 500; color: rgba(255,255,255,.75); }
   .price .big p { color: rgba(255,255,255,.82); margin: 8px 0 0; font-size: 9.6pt; }
   .price .year { border: 2px solid var(--coral-text); border-radius: 3px; padding: 14px 16px; background: var(--coral-soft); }
   .price .year div { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-bottom: 1px dotted #e2a3ad; font-size: 10pt; } .price .year div:last-child { border: 0; }
-  .price .year b { font-family: "Zilla Slab"; font-weight: 700; }
+  .price .year b { font-family: "Montserrat"; font-weight: 700; }
   .terms li { margin: 3px 0; font-size: 9.6pt; }
   .sla { width: 100%; border-collapse: collapse; font-size: 9pt; margin-top: 4px; } .sla td, .sla th { border-bottom: 1px solid var(--line); padding: 4px 6px; text-align: left; } .sla th { font-size: 7.8pt; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); background: var(--surface-2); }
   .weeks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 6px 0 10px; }
   .week { border: 1px solid var(--line); border-radius: 3px; padding: 10px 12px; background: #fff; }
-  .week b { display: inline-block; font-family: "Zilla Slab"; font-weight: 700; font-size: 8.5pt; background: var(--ink); color: var(--bg); border-radius: 4px; padding: 3px 6px; margin-bottom: 5px; }
+  .week b { display: inline-block; font-family: "Montserrat"; font-weight: 700; font-size: 8.5pt; background: var(--red); color: #fff; border-radius: 4px 4px 0 0; padding: 3px 6px; margin-bottom: 5px; }
   .week p { margin: 0; font-size: 9.5pt; }
+  /* motion stills */
+  .stills { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; margin-top: 8px; }
+  .stills figure { margin: 0; text-align: left; }
+  .stills img { width: 100%; border: 1px solid var(--line); border-radius: 4px; }
+  .stills .phone img { width: auto; height: 2.3in; border: 6px solid var(--graphite); border-radius: 14px; }
+  .stills .phone { display: flex; gap: 12px; align-items: flex-start; }
+  .stills figcaption { margin-top: 5px; font-size: 8.6pt; line-height: 1.35; color: var(--ink-2); border-left: 3px solid var(--coral-text); padding-left: 8px; }
+  .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .rules div { background: var(--surface-2); border-radius: 6px; padding: 9px 12px; font-size: 8.9pt; color: var(--ink-2); }
+  .rules b { display: block; color: var(--ink); font-size: 9.4pt; margin-bottom: 2px; }
   footer.foot { margin-top: auto; padding-top: 6px; font-size: 7.8pt; color: #8a939d; display: flex; justify-content: space-between; border-top: 1px solid var(--line); align-items: center; } footer.foot .fl { display: inline-flex; align-items: center; gap: 6px; }
 
   .phones img { border-radius: 14px; }
@@ -420,6 +441,29 @@ ${sec.screens.map((s) => screenPages(sec, s)).join('')}
   <p style="margin:0 0 4px">An operative can apply from a phone without a CV, and a salesperson can see what is waiting from the road.</p>
   ${phones([['m-careers', 'Careers'], ['m-admin-dashboard', 'Back-office overview'], ['m-admin-quote', 'A quote request']])}
   ${notes([['Apply in minutes', 'No CV for operatives, drivers or frame erectors; a PDF or Word CV where one is needed.'], ['Waiting first', 'The overview opens on what has waited too long.'], ['One tap to call', 'Call or email the buyer, customer, haulier or applicant from the record.']])}
+  ${foot()}
+</section>
+
+
+<section class="page">
+  <header class="shot-head"><div><p class="eyebrow">Motion and interaction</p><h2>A site that moves like a working mill</h2></div><p class="url">Stills from the home page</p></header>
+  <p style="margin:0 0 2px">Movement is used to explain the business, not to decorate it: logs become boards, boards become a house, routes join the four mills. Every effect is built into the site itself (no video files, no heavy animation libraries), so pages stay fast on a phone.</p>
+  <div class="stills">
+    ${['hero', 'map', 'story-2', 'story-5'].map((n) => `<figure><img src="${img(still(n).file)}" alt=""><figcaption>${esc(still(n).caption)}</figcaption></figure>`).join('')}
+  </div>
+  <div class="rules">
+    <div><b>Calm when asked</b>Visitors whose phone or computer asks for reduced motion get the same pages with no movement at all.</div>
+    <div><b>Nothing waits on a script</b>Every word and figure is in the page as sent. If JavaScript is off or fails, the content is simply there.</div>
+    <div><b>Smooth on older phones</b>Only movement the graphics chip handles cheaply, so the page never jumps while it loads.</div>
+  </div>
+  ${foot()}
+</section>
+<section class="page">
+  <header class="shot-head"><div><p class="eyebrow">Motion and interaction · continued</p><h2>Figures, themes, history and the phone menu</h2></div><p class="url">1440 × 900 and 390 × 844</p></header>
+  <div class="stills">
+    ${['figures', 'theme', 'timeline'].map((n) => `<figure><img src="${img(still(n).file)}" alt=""><figcaption>${esc(still(n).caption)}</figcaption></figure>`).join('')}
+    <figure class="phone"><img src="${img(still('phone-menu').file)}" alt=""><figcaption>${esc(still('phone-menu').caption)} A marquee of the group's product range runs under the hero and stops when a pointer or the keyboard reaches it.</figcaption></figure>
+  </div>
   ${foot()}
 </section>
 

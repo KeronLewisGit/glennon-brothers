@@ -51,6 +51,9 @@ async function settle() {
         // Lazy images below the fold would be blank in a full-page capture: load them all now.
     document.querySelectorAll('img[loading="lazy"]').forEach(i => { i.loading = 'eager'; });
     window.scrollTo(0, document.body.scrollHeight); await new Promise(r => setTimeout(r, 400)); window.scrollTo(0, 0);
+    await new Promise(r => setTimeout(r, 100));
+    // The log-to-frame story shows its first scene, as it does before anyone scrolls.
+    document.querySelectorAll('[data-process]').forEach(e => { e.dataset.step = '1'; e.querySelectorAll('.process-step').forEach((s, i) => s.classList.toggle('is-active', i === 0)); });
     await Promise.race([
       Promise.all([...document.images].filter(i => !i.complete).map(i => new Promise(r => { i.onload = i.onerror = r; }))),
       new Promise(r => setTimeout(r, 5000)),

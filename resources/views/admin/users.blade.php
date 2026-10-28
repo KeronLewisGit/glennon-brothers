@@ -1,5 +1,5 @@
 <x-layouts.admin title="Staff accounts">
-    <div class="grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+    <div class="grid gap-6 2xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <div class="a-card table-box min-w-0">
             <table class="data-table">
                 <thead><tr><th>Name</th><th>Role and team</th><th>Sees</th><th>Active</th><th><span class="sr-only">Save</span></th></tr></thead>

@@ -1,5 +1,5 @@
 <x-layouts.site title="Site map" description="Every page on the Glennon Brothers website.">
-    <x-page-header photo="windymains-aerial" title="Site map" kicker="Site map" code="L3" lead="Every public page on this website." />
+    <x-page-header photo="windymains-aerial" title="Site map" kicker="Site map" lead="Every public page on this website." />
     <section class="wrap mt-12 grid gap-10 md:mt-16 md:grid-cols-2 lg:grid-cols-4">
         <div><h2 class="text-lg font-bold">The group</h2><ul class="mt-3 space-y-1">
             @foreach (['home' => 'Home', 'about' => 'About the group', 'news' => 'News', 'sustainability' => 'Sustainability', 'contact' => 'Contact', 'privacy' => 'Privacy notice', 'credits' => 'Photo credits'] as $r => $l)

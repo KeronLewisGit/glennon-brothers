@@ -1,5 +1,5 @@
 <x-layouts.site title="Privacy notice" description="How Glennon Brothers handles the details sent through this website, under the GDPR, the Irish Data Protection Acts and UK GDPR.">
-    <x-page-header photo="windymains-tank" title="Privacy notice" kicker="Privacy" code="L1" lead="What we keep when you ask for a quote, send a timber frame enquiry, book a yard slot, apply for a job or send a message, and why." />
+    <x-page-header photo="windymains-tank" title="Privacy notice" kicker="Privacy" lead="What we keep when you ask for a quote, send a timber frame enquiry, book a yard slot, apply for a job or send a message, and why." />
     <section class="wrap prose-copy measure mt-12 md:mt-16">
         <p>This website is run by {{ gb('name') }}, {{ gb('address.street') }}, {{ gb('address.city') }} {{ gb('address.postcode') }}, Ireland, which is the controller of the personal data sent through it. We handle it under the General Data Protection Regulation (GDPR) and the Data Protection Acts 1988 to 2018. Where you deal with our Scottish plants (Windymains Timber Ltd and Glennon Brothers (UK) Ltd), the UK GDPR and the Data Protection Act 2018 also apply. Questions: <a href="mailto:{{ gb('email') }}">{{ gb('email') }}</a> or {{ format_phone(gb('phone')) }}.</p>
         <h2>What we collect</h2>

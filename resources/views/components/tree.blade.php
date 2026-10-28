@@ -1,9 +1,13 @@
 {{--
-    The twin-tree mark from the Glennon Brothers logo: two firs drawn as stepped outlines,
-    redrawn as vector. Takes its colour from currentColor.
+    The twin-fir mark from the Glennon Brothers logo, traced from the group's logo PNG. Takes its
+    colour from currentColor. Pass draw to get an outline version whose stroke can be animated.
 --}}
-<svg viewBox="0 0 48 26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="miter" stroke-linecap="square" aria-hidden="true" focusable="false" {{ $attributes }}>
-    <path d="M12 2 19.5 11H15.5L22.5 21H1.5L8.5 11H4.5Z"/>
-    <path d="M36 2 43.5 11H39.5L46.5 21H25.5L32.5 11H28.5Z"/>
-    <path d="M12 21v3.2M36 21v3.2"/>
+@props(['draw' => false])
+<svg viewBox="0 0 72 41" aria-hidden="true" focusable="false" {{ $attributes }}>
+    @if ($draw)
+        <path class="tree-draw" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" d="M16.4 40.5 16.4 35.6 9 35.6 13.6 25.5 16.4 25.5 16.4 20.5 11 20.5 18.1 7.6 25.2 20.5 19.8 20.5 19.8 25.5 22.6 25.5 27.2 35.6 19.8 35.6 19.8 40.5 35.5 40.5 36.2 40.5 51.9 40.5 51.9 35.6 44.5 35.6 49.1 25.5 51.9 25.5 51.9 20.5 46.5 20.5 53.6 7.6 60.7 20.5 55.3 20.5 55.3 25.5 58.1 25.5 62.7 35.6 55.3 35.6 55.3 40.5 71.7 40.5 62.7 25.5 68.5 25.5 53.6 0 38.7 25.5 44.5 25.5 35.9 39.9 27.2 25.5 33 25.5 18.1 0 3.2 25.5 9 25.5 0 40.5Z"/>
+        <path class="tree-fill" fill="currentColor" d="M16.4 40.5 16.4 35.6 9 35.6 13.6 25.5 16.4 25.5 16.4 20.5 11 20.5 18.1 7.6 25.2 20.5 19.8 20.5 19.8 25.5 22.6 25.5 27.2 35.6 19.8 35.6 19.8 40.5 35.5 40.5 36.2 40.5 51.9 40.5 51.9 35.6 44.5 35.6 49.1 25.5 51.9 25.5 51.9 20.5 46.5 20.5 53.6 7.6 60.7 20.5 55.3 20.5 55.3 25.5 58.1 25.5 62.7 35.6 55.3 35.6 55.3 40.5 71.7 40.5 62.7 25.5 68.5 25.5 53.6 0 38.7 25.5 44.5 25.5 35.9 39.9 27.2 25.5 33 25.5 18.1 0 3.2 25.5 9 25.5 0 40.5Z"/>
+    @else
+        <path fill="currentColor" d="M16.4 40.5 16.4 35.6 9 35.6 13.6 25.5 16.4 25.5 16.4 20.5 11 20.5 18.1 7.6 25.2 20.5 19.8 20.5 19.8 25.5 22.6 25.5 27.2 35.6 19.8 35.6 19.8 40.5 35.5 40.5 36.2 40.5 51.9 40.5 51.9 35.6 44.5 35.6 49.1 25.5 51.9 25.5 51.9 20.5 46.5 20.5 53.6 7.6 60.7 20.5 55.3 20.5 55.3 25.5 58.1 25.5 62.7 35.6 55.3 35.6 55.3 40.5 71.7 40.5 62.7 25.5 68.5 25.5 53.6 0 38.7 25.5 44.5 25.5 35.9 39.9 27.2 25.5 33 25.5 18.1 0 3.2 25.5 9 25.5 0 40.5Z"/>
+    @endif
 </svg>

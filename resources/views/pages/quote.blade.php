@@ -10,7 +10,7 @@
     $units = enum_options(\App\Enums\QuoteUnit::class);
 @endphp
 <x-layouts.site title="Trade quote" description="Request a trade price from Glennon Brothers for construction timber, CLS, fencing, pallet and packaging timber: product, sizes, treatment, quantity and delivery site.">
-    <x-page-header title="Request a trade quote" kicker="Trade and merchants" code="Q" photo="packs"
+    <x-page-header title="Request a trade quote" kicker="Trade and merchants" photo="packs"
         :ticket="['Ireland' => 'Priced in euro', 'UK' => 'Priced in sterling', 'Lines' => 'Up to '.$max.', or attach a list']"
         lead="List what you need line by line. The request goes to the Ireland or UK sales team, depending on where the timber is going, and you get a reference number straight away." />
 
@@ -75,7 +75,7 @@
                 <x-field name="remarks" label="Anything else" type="textarea" :optional="true" maxlength="3000" hint="Delivery restrictions, part loads, packaging, certification (FSC®) needed." />
                 <p class="hint">We use these details only to answer this request. See the <a class="text-link" href="{{ route('privacy') }}">privacy notice</a>.</p>
             </x-fieldset>
-            <div class="border-t-2 border-ink pt-6"><x-submit label="Send for pricing" /></div>
+            <div class="border-t-2 border-brand pt-6"><x-submit label="Send for pricing" /></div>
         </form>
     </section>
 </x-layouts.site>

@@ -38,12 +38,12 @@ class PublicSiteTest extends TestCase
                 continue;
             }
             $html = (string) $this->get($url)->getContent();
-            $this->assertStringContainsString('class="rings relative isolate', $html, "{$url} has no shared header");
+            $this->assertStringContainsString('class="page-head rings relative isolate', $html, "{$url} has no shared header");
             $this->assertStringContainsString('class="bale"', $html, "{$url} header has no bale band");
             $this->assertStringContainsString('class="stamp"', $html, "{$url} header has no stamp kicker");
         }
         // The home hero is a variant of the same band.
-        $this->get('/')->assertSee('class="rings relative isolate', false)->assertSee('class="ticket', false);
+        $this->get('/')->assertSee('class="home-hero rings relative isolate', false)->assertSee('class="ticket', false);
     }
 
     public function test_unknown_plants_404(): void

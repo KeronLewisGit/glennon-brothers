@@ -11,7 +11,7 @@
     ][$code] ?? ['Something went wrong', 'Please try again.'];
 @endphp
 <x-layouts.site :title="$copy[0]" :mobile-bar="false">
-    <x-page-header photo="troon-yard" :title="$copy[0]" :lead="$message ?: $copy[1]" :code="'E'.$code" :kicker="'Error '.$code" />
+    <x-page-header photo="troon-yard" :title="$copy[0]" :lead="$message ?: $copy[1]" :code="(string) $code" :kicker="'Error '.$code" />
     <section class="wrap mt-12 flex flex-wrap gap-3 md:mt-16">
         <a href="{{ route('home') }}" class="btn btn-primary">Go to the home page<x-icon name="arrow-right" class="nudge h-4 w-4" /></a>
         @if ($code === '404')

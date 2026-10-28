@@ -1,5 +1,5 @@
 @props(['fields' => [], 'title' => 'Glennon Brothers', 'foot' => null, 'footValue' => null])
-{{-- Pack ticket: the label stapled to every timber pack. Fields are label => value. --}}
+{{-- Tabbed info card: a white box with a red tab, as on the current site. Fields are label => value. --}}
 <div {{ $attributes->merge(['class' => 'ticket']) }}>
     <p class="ticket-head"><x-tree />{{ $title }}</p>
     <dl>

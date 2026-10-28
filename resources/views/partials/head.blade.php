@@ -8,6 +8,12 @@
 <script>
     // Apply the saved theme before first paint so there is no flash.
     document.documentElement.classList.add('js');
+    // Motion is opt-in: only with JavaScript and without a reduced-motion preference. If the app
+    // script has not started within 3 s, drop it again so nothing waits on an animation.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('motion');
+        setTimeout(function () { if (!window.gbMotionReady) document.documentElement.classList.remove('motion'); }, 3000);
+    }
     try { var t = localStorage.getItem('theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
 @fonts

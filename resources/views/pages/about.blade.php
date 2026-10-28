@@ -17,20 +17,20 @@
             </div>
         </div>
         <figure>
-            <x-photo key="directors" alt="Pat and Mike Glennon, joint managing directors of Glennon Brothers" sizes="(min-width: 1024px) 40vw, 100vw" class="aspect-[4/3] border-2 border-ink" />
+            <x-photo key="directors" alt="Pat and Mike Glennon, joint managing directors of Glennon Brothers" sizes="(min-width: 1024px) 40vw, 100vw" class="aspect-[4/3] box-photo" />
             <figcaption class="mt-3"><span class="font-semibold">{{ $d['names'] }}</span>, {{ $d['title'] }}. <span class="photo-caption">From the group's own website.</span></figcaption>
         </figure>
     </section>
 
     <section id="history" class="mt-20 bg-surface-2 py-14 md:py-20" aria-labelledby="timeline-title">
         <div class="wrap">
-            <x-stamp code="02">Growth rings</x-stamp>
+            <x-stamp code="02">History</x-stamp>
             <h2 id="timeline-title" class="display-3 mt-4">From water power to biomass CHP</h2>
-            <ol class="timeline mt-10">
+            <ol class="timeline mt-10" data-timeline>
                 @foreach ($timeline as [$year, $text])
-                    <li class="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 border-t border-line-strong py-4 sm:grid-cols-[7rem_minmax(0,1fr)]">
-                        <span class="font-display num text-2xl font-bold text-mark">{{ $year }}</span>
-                        <span class="pt-1 text-ink-2 measure">{{ $text }}</span>
+                    <li class="timeline-item" data-reveal>
+                        <span class="timeline-year font-display num">{{ $year }}</span>
+                        <span class="timeline-text text-ink-2 measure">{{ $text }}</span>
                     </li>
                 @endforeach
             </ol>
@@ -43,7 +43,7 @@
         <h2 id="awards-title" class="display-3 mt-4">Recognised by the trade</h2>
         <div class="mt-8 grid gap-5 md:grid-cols-2">
             @foreach ((array) gb('awards') as $a)
-                <div class="flex gap-4 border-2 border-ink bg-surface p-6">
+                <div class="flex gap-4 box p-6">
                     <x-icon name="award" class="h-8 w-8 flex-none text-mark" />
                     <div>
                         <p class="kicker text-ink-3">{{ $a['by'] }} · {{ $a['year'] }}</p>
@@ -57,7 +57,7 @@
     </section>
 
     <section class="wrap mt-16">
-        <div class="border-t-2 border-ink pt-6">
+        <div class="border-t-2 border-brand pt-6">
             <h2 class="kicker text-ink-3">The group's brands</h2>
             <ul class="mt-3 flex flex-wrap gap-x-8 gap-y-2 font-display text-xl font-bold">
                 @foreach ((array) gb('brands') as $b)<li>{{ $b }}</li>@endforeach

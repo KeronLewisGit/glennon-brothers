@@ -57,7 +57,7 @@
                 </div>
                 <p class="hint">We use these details only to answer this enquiry. See the <a class="text-link" href="{{ route('privacy') }}">privacy notice</a>.</p>
             </x-fieldset>
-            <div class="border-t-2 border-ink pt-6"><x-submit label="Send to DTE" /></div>
+            <div class="border-t-2 border-brand pt-6"><x-submit label="Send to DTE" /></div>
         </form>
     </section>
 </x-layouts.site>

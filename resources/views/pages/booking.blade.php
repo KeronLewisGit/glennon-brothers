@@ -1,5 +1,5 @@
 <x-layouts.site title="Haulier slot booking" description="Hauliers: ask for a loading or tipping slot at the Glennon Brothers mills in Longford, Fermoy, Windymains or Troon.">
-    <x-page-header title="Book a yard slot" kicker="Hauliers" code="H" photo="troon-night"
+    <x-page-header title="Book a yard slot" kicker="Hauliers" photo="troon-night"
         :ticket="['Book' => 'From tomorrow', 'Up to' => \App\Models\DeliveryBooking::MAX_DAYS_AHEAD.' days ahead', 'Confirmed by' => 'The plant']"
         lead="Collecting timber, delivering logs or taking residues away? Ask for a slot and the plant will confirm it, or offer another time, by email. For today, ring the plant." />
 
@@ -28,7 +28,7 @@
                 </div>
                 <x-field name="remarks" label="Notes for the yard" type="textarea" :optional="true" maxlength="1000" />
             </x-fieldset>
-            <div class="border-t-2 border-ink pt-6"><x-submit label="Ask for this slot" /></div>
+            <div class="border-t-2 border-brand pt-6"><x-submit label="Ask for this slot" /></div>
         </form>
     </section>
 </x-layouts.site>

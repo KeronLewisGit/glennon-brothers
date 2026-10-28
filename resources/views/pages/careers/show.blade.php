@@ -8,7 +8,7 @@
         + ($job->closes_on ? ['validThrough' => $job->closes_on->endOfDay()->toIso8601String()] : []);
 @endphp
 <x-layouts.site :title="$job->title" :description="$job->summary" :json-ld="[$ld]">
-    <x-page-header :title="$job->title" :kicker="$job->plant->label().' · '.$job->category->short()" code="C" photo="troon-mill" :lead="$job->summary"
+    <x-page-header :title="$job->title" :kicker="$job->plant->label().' · '.$job->category->short()" photo="troon-mill" :lead="$job->summary"
         :ticket="['Plant' => $job->plant->label(), 'Role' => $job->category->label(), 'Terms' => $job->employment_type->label(), 'Closes' => $job->closes_on?->format('j F Y') ?? 'Open until filled']">
         <div class="mt-6 flex flex-wrap gap-3"><a href="{{ route('careers.apply', ['job' => $job->slug]) }}" class="btn btn-light">Apply for this job<x-icon name="arrow-right" class="nudge h-4 w-4" /></a><a href="{{ route('careers.index') }}" class="btn btn-on-dark">All openings</a></div>
     </x-page-header>
@@ -21,7 +21,7 @@
         @endif
     </section>
     <section class="wrap mt-12">
-        <dl class="grid gap-6 border-y-2 border-ink py-6 sm:grid-cols-3">
+        <dl class="grid gap-6 border-y-2 border-brand py-6 sm:grid-cols-3">
             <div><dt class="kicker text-ink-3">Where</dt><dd class="mt-1">{{ implode(', ', array_slice($address, 0, 3)) }}</dd></div>
             <div><dt class="kicker text-ink-3">Hours</dt><dd class="mt-1">{{ $job->hours ?: $job->employment_type->label() }}</dd></div>
             <div><dt class="kicker text-ink-3">CV</dt><dd class="mt-1">{{ $job->category->needsCv() ? 'Please attach one' : 'Not needed' }}</dd></div>

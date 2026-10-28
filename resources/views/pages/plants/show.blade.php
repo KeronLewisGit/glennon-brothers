@@ -3,7 +3,7 @@
     $team = $uk ? 'UK sales' : 'Ireland sales';
 @endphp
 <x-layouts.site :title="$plant['name'].' sawmill'" :description="$plant['name'].': '.$plant['summary']" :og-image="$plant['photo']">
-    <x-page-header :title="$plant['name']" :kicker="$plant['role']" :code="strtoupper(substr($key, 0, 2))" :photo="$plant['photo']" :caption="$plant['company']"
+    <x-page-header :title="$plant['name']" :kicker="$plant['role']" :photo="$plant['photo']" :caption="$plant['company']"
         :ticket="['Mill' => $plant['name'], 'Company' => $plant['company'], 'Country' => $uk ? 'Scotland' : 'Ireland', 'Sales team' => $team]"
         :lead="$plant['summary']">
         <nav aria-label="Breadcrumb" class="mt-6 text-sm text-white/75"><a href="{{ route('plants.index') }}" class="inline-flex min-h-11 items-center gap-1.5 hover:text-white"><x-icon name="arrow-left" class="h-4 w-4" />All the mills</a></nav>
@@ -15,7 +15,7 @@
             <div class="prose-copy mt-5 measure">
                 @foreach ($plant['story'] as $para)<p>{{ $para }}</p>@endforeach
             </div>
-            <dl class="mt-10 grid gap-6 border-t-2 border-ink pt-6 sm:grid-cols-3">
+            <dl class="mt-10 grid gap-6 border-t-2 border-brand pt-6 sm:grid-cols-3">
                 @foreach ($plant['facts'] as [$label, $value])
                     <div><dt class="kicker text-ink-3">{{ $label }}</dt><dd class="font-display mt-1 text-xl font-bold">{{ $value }}</dd></div>
                 @endforeach
@@ -37,7 +37,7 @@
         </div>
 
         <aside class="space-y-6">
-            <div class="border-2 border-ink bg-surface p-6">
+            <div class="box p-6">
                 <h2 class="text-xl font-bold">Contact {{ $plant['name'] }}</h2>
                 <address class="mt-3 not-italic text-ink-2">{{ $plant['company'] }}<br>{!! implode('<br>', array_map('e', $plant['address'])) !!}</address>
                 <p class="mt-4"><a href="{{ tel_href($plant['phone']) }}" class="font-display inline-flex min-h-11 items-center gap-2 text-xl font-bold text-link"><x-icon name="phone" class="h-5 w-5" />{{ format_phone($plant['phone']) }}</a></p>

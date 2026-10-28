@@ -3,7 +3,7 @@
     $icons = ['construction' => 'stack', 'fencing' => 'fence', 'pallet' => 'pallet', 'decking' => 'layers', 'residues' => 'leaf'];
 @endphp
 <x-layouts.site title="Products" description="Kiln-dried strength-graded carcassing, CLS, fencing, Glendeck decking, pallet and packaging timber, and wood residues from Glennon Brothers' four sawmills.">
-    <x-page-header title="Sawn, dried, graded and treated" kicker="Products" code="P" photo="troon-stacks"
+    <x-page-header title="Sawn, dried, graded and treated" kicker="Products" photo="troon-stacks"
         :ticket="['Species' => 'Home-grown spruce', 'Drying' => 'Kiln dried or green', 'Treatment' => 'Pressure or heat', 'Sizes' => 'Millimetres']"
         lead="Construction timber, fencing, decking and pallet wood from Irish and Scottish forests, and a use for every by-product of the log. Sizes below are as the group lists them, in millimetres.">
         <nav aria-label="Product groups" class="tag-row mt-8">
@@ -18,9 +18,9 @@
             <section id="{{ $key }}" class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-14" aria-labelledby="{{ $key }}-title">
                 <div @class(['lg:order-2' => $loop->even])>
                     @if ($p['photo'])
-                        <x-photo :key="$p['photo']" :alt="$p['photo_alt']" sizes="(min-width: 1024px) 45vw, 100vw" class="aspect-[4/3] border-2 border-ink" />
+                        <x-photo :key="$p['photo']" :alt="$p['photo_alt']" sizes="(min-width: 1024px) 45vw, 100vw" class="aspect-[4/3] box-photo" />
                     @else
-                        <div class="kerf-grid flex aspect-[4/3] items-end border-2 border-ink bg-surface-2 p-6 text-ink" aria-hidden="true">
+                        <div class="kerf-grid flex aspect-[4/3] items-end box-2 p-6 text-ink" aria-hidden="true">
                             <x-icon :name="$icons[$key]" class="h-16 w-16 text-mark" />
                         </div>
                     @endif
@@ -29,7 +29,7 @@
                     <x-stamp :code="str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT)">Product line</x-stamp>
                     <h2 id="{{ $key }}-title" class="display-3 mt-4">{{ $p['title'] }}</h2>
                     <p class="mt-4 text-ink-2 measure">{{ $p['intro'] }}</p>
-                    <dl class="mt-6 divide-y divide-line border-y-2 border-ink">
+                    <dl class="mt-6 divide-y divide-line border-y-2 border-brand">
                         @foreach ($p['items'] as $item)
                             <div class="grid gap-1 py-4 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-6">
                                 <dt class="font-display text-lg font-bold">{{ $item['name'] }}</dt>

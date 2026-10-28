@@ -4,32 +4,32 @@ import { bunny } from 'laravel-vite-plugin/fonts';
 import tailwindcss from '@tailwindcss/vite';
 
 // Fonts are downloaded at build time and served from /build, so visitors never hit a font CDN.
-// Two families only: Zilla Slab, a slab serif with the weight of a stencilled pack mark, for
-// headings, numerals and pack tickets; Instrument Sans, a clear, slightly condensed grotesque,
-// for everything people read.
+// The group's own pairing, from its Teamtailor careers site: Montserrat (headings, 600) and Inter
+// (body). Montserrat is also the closest open match to the geometric GLENNON wordmark; the old
+// glennonbrothers.ie sets everything in Verdana, which stays in the body fallback stack.
 export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
             fonts: [
-                bunny('Zilla Slab', {
+                bunny('Montserrat', {
                     alias: 'display',
                     variable: '--ff-display',
                     weights: [500, 600, 700],
                     styles: ['normal'],
                     subsets: ['latin'],
-                    preload: [{ weight: 700 }],
-                    fallbacks: ['Rockwell', 'Georgia', 'serif'],
+                    preload: [{ weight: 600 }],
+                    fallbacks: ['Century Gothic', 'Avenir Next', 'sans-serif'],
                 }),
-                bunny('Instrument Sans', {
+                bunny('Inter', {
                     alias: 'sans',
                     variable: '--ff-sans',
                     weights: [400, 500, 600, 700],
                     styles: ['normal'],
                     subsets: ['latin'],
                     preload: [{ weight: 400 }, { weight: 600 }],
-                    fallbacks: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+                    fallbacks: ['Verdana', 'ui-sans-serif', 'system-ui', 'sans-serif'],
                 }),
             ],
         }),

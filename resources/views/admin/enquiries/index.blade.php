@@ -9,7 +9,7 @@
                         <tr>
                             <td><a href="{{ route('admin.enquiries.show', $e) }}" class="font-semibold text-link underline-offset-2 hover:underline">{{ $e->name }}</a><p class="text-xs text-ink-3">{{ $e->organisation ?? $e->email }}</p></td>
                             <td class="whitespace-nowrap">{{ $e->topic->label() }}</td>
-                            <td class="min-w-[16rem] text-ink-2">{{ \Illuminate\Support\Str::limit($e->message, 90) }}</td>
+                            <td class="min-w-[12rem] text-ink-2">{{ \Illuminate\Support\Str::limit($e->message, 90) }}</td>
                             <td><x-status :status="$e->status" /></td>
                             <td class="r whitespace-nowrap">{{ $e->created_at->format('j M') }}</td>
                         </tr>

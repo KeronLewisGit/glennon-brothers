@@ -24,7 +24,7 @@
                     <x-submit label="Send drawings" />
                 </form>
             @else
-                <p class="border-2 border-ink bg-surface p-6">This enquiry is {{ strtolower($enquiry->status->label()) }}, so the link no longer takes drawings. Please email <a class="text-link" href="mailto:{{ gb('dte.email') }}">{{ gb('dte.email') }}</a>.</p>
+                <p class="box p-6">This enquiry is {{ strtolower($enquiry->status->label()) }}, so the link no longer takes drawings. Please email <a class="text-link" href="mailto:{{ gb('dte.email') }}">{{ gb('dte.email') }}</a>.</p>
             @endif
         </div>
         <aside>

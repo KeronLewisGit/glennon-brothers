@@ -21,14 +21,14 @@
     <div class="a-card mt-5 min-w-0">
         <div class="table-box">
             <table class="data-table">
-                <thead><tr><th>Applicant</th><th>Position</th><th>Plant</th><th>Experience</th><th>Stage</th><th>Reviewer</th><th>CV</th><th class="r">Received</th></tr></thead>
+                <thead><tr><th class="min-w-[10rem]">Applicant</th><th>Position</th><th>Plant</th><th class="hidden 2xl:table-cell">Experience</th><th>Stage</th><th>Reviewer</th><th>CV</th><th class="r">Received</th></tr></thead>
                 <tbody>
                     @forelse ($applications as $a)
                         <tr>
                             <td><a href="{{ route('admin.applications.show', $a) }}" class="font-semibold text-link underline-offset-2 hover:underline">{{ $a->full_name }}</a><p class="num text-xs text-ink-3">{{ $a->reference }}</p></td>
-                            <td class="min-w-[12rem]">{{ $a->position() }}</td>
+                            <td class="min-w-[9rem]">{{ $a->position() }}</td>
                             <td class="whitespace-nowrap">{{ $a->plantLabel() }}</td>
-                            <td class="whitespace-nowrap">{{ $a->experience->label() }}</td>
+                            <td class="hidden min-w-[6rem] 2xl:table-cell">{{ $a->experience->label() }}</td>
                             <td><x-status :status="$a->status" /></td>
                             <td class="whitespace-nowrap">{{ $a->reviewer->name ?? '—' }}</td>
                             <td>@if($a->cv_path)<x-icon name="file" class="h-4 w-4" /><span class="sr-only">CV attached</span>@else<span class="text-ink-3">—</span>@endif</td>

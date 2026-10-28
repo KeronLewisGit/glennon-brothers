@@ -2,7 +2,7 @@
     $plantOptions = enum_options(\App\Enums\Plant::class) + ['any' => 'Any plant'];
 @endphp
 <x-layouts.site title="Apply" description="Apply to work at Glennon Brothers: Longford, Fermoy, Windymains, Troon or DTE.">
-    <x-page-header :title="$selected ? 'Apply: '.$selected->title : 'Apply to work with us'" kicker="Careers" code="C" photo="troon-mill"
+    <x-page-header :title="$selected ? 'Apply: '.$selected->title : 'Apply to work with us'" kicker="Careers" photo="troon-mill"
         :ticket="['Takes' => 'About three minutes', 'CV' => 'Maintenance and office roles', 'Goes to' => 'Group HR']"
         lead="Operatives, drivers and erectors can apply without a CV. Maintenance, electrical and office roles need one." />
     <section class="wrap mt-12 max-w-3xl md:mt-16">
@@ -47,7 +47,7 @@
                 <label class="choice items-start"><input type="checkbox" name="consent" value="1" class="mt-0.5" @checked(old('consent')) required><span>I agree to Glennon Brothers keeping my application for up to 12 months to consider me for work (<a class="text-link" href="{{ route('privacy') }}#applicants">privacy notice</a>).</span></label>
                 <x-error for="consent" />
             </x-fieldset>
-            <div class="border-t-2 border-ink pt-6"><x-submit label="Send my application" /></div>
+            <div class="border-t-2 border-brand pt-6"><x-submit label="Send my application" /></div>
         </form>
     </section>
 </x-layouts.site>

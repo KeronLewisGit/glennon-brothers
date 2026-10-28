@@ -14,12 +14,12 @@
     <div class="a-card mt-5 min-w-0">
         <div class="table-box">
             <table class="data-table">
-                <thead><tr><th>Client</th><th>Project</th><th>Site</th><th>Start</th><th class="r">Drawings</th><th>Status</th><th class="r">Received</th></tr></thead>
+                <thead><tr><th class="min-w-[11rem]">Client</th><th>Project</th><th>Site</th><th>Start</th><th class="r">Drawings</th><th>Status</th><th class="r">Received</th></tr></thead>
                 <tbody>
                     @forelse ($enquiries as $e)
                         <tr>
                             <td><a href="{{ route('admin.frame.show', $e) }}" class="font-semibold text-link underline-offset-2 hover:underline">{{ $e->name }}</a><p class="num text-xs text-ink-3">{{ $e->reference }} · {{ $e->client_type->label() }}</p></td>
-                            <td class="whitespace-nowrap">{{ $e->project_type->label() }}@if($e->units)<p class="text-xs text-ink-3">{{ $e->units }} homes</p>@endif</td>
+                            <td class="min-w-[9rem]">{{ $e->project_type->label() }}@if($e->units)<p class="text-xs text-ink-3">{{ $e->units }} homes</p>@endif</td>
                             <td class="min-w-[10rem]">Co. {{ $e->county }}<p class="text-xs text-ink-3">{{ $e->planning_status->label() }}</p></td>
                             <td class="whitespace-nowrap">{{ $e->startLabel() }}</td>
                             <td class="r">{{ $e->drawings_count }}</td>
